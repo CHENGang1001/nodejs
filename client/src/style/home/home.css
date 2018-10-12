@@ -59,12 +59,13 @@
     width: 100%;
 }
 .home-first-item42{
+    display: inline;
     width: 100%;
     float: left;
 }
 
 .home-first-item412{
-    width: 94%;
+    width: 92%;
     height: 65px;
     line-height: 65px;
     margin-right: 10px;
@@ -75,7 +76,7 @@
 }
 .home-first-item421{
     float: left;
-    width: 45%;
+    width: 44%;
     height: 65px;
     line-height: 65px;
     margin-left: 10px;
@@ -86,7 +87,7 @@
 }
 .home-first-item422{
     float: left;
-    width: 45%;
+    width: 44%;
     height: 65px;
     line-height: 65px;
     margin-right: 10px;
@@ -96,25 +97,31 @@
     background: #9A9A9A;
 }
 
-.home-second-item-all{
-    float: left;
+.home-second-item{
     width: 25%;
-    background: white;
+    text-align: center;
 }
 
-.home-second-item{
-    display: inline;
-    float: left;
-    width: 50%;
+.home-second-item-all{
+    background: white;
     text-align: center;
-    background: #00B7FF;
+    line-height: 400px
 }
 
 .home-second-item1{
-    float: left;
-    text-align: center;
     margin-left: 15px;
+}
+
+.home-second-item2{
+    margin-left: 20px;
+}
+
+.home-second-item3{
+    margin-left: 10px;
     margin-right: 10px;
+}
+.home-second-item4{
+    margin-right: 20px;
 }
 
 
