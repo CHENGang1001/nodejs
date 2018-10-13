@@ -10,7 +10,13 @@
     [{
         "title":"首页"
         ,"icon":"layui-icon-home"
-        ,"jump":"/home/homepage"
+        ,"list":[{
+            "title":"首页"
+            ,"jump":"/home/homepage"
+        },{
+            "title":"test表格"
+            ,"jump":"/home/hometable"
+        }]
     },{
         "title": "概览"
         , "icon": "layui-icon-home"
