@@ -8,16 +8,16 @@
         , "data"
 :
     [{
-        "title":"首页"
-        ,"icon":"layui-icon-home"
-        ,"list":[{
-            "title":"首页"
-            ,"jump":"/home/homepage"
-        },{
-            "title":"test表格"
-            ,"jump":"/home/hometable"
+        "title": "首页"
+        , "icon": "layui-icon-home"
+        , "list": [{
+            "title": "首页"
+            , "jump": "/home/homepage"
+        }, {
+            "title": "test表格"
+            , "jump": "/home/hometable"
         }]
-    },{
+    }, {
         "title": "概览"
         , "icon": "layui-icon-home"
         , "list": [{
@@ -31,6 +31,52 @@
             "name": "homepage2"
             , "title": "发电量"
             , "jump": "home/homepage2"
+        }]
+    }, {
+        "title": "系统设置"
+        , "icon": "layui-icon-home"
+        , "list": [{
+            "title": "基本参数"
+            , "list": [{
+                "name": "systemtime"
+                , "title": "系统时间"
+                , "jump": "settings/base/systemtime"
+            }
+                , {
+                    "name": "stationinfo"
+                    , "title": "电站信息"
+                    , "jump": "settings/base/stationinfo"
+                }]
+        }, {
+            "title": "端口参数"
+            , "list": [{
+                "name": "RS485"
+                , "title": "RS485"
+                , "jump": "settings/ports/RS485"
+            }
+                , {
+                    "name": "ethernet"
+                    , "title": "以太网"
+                    , "jump": "settings/ports/ethernet"
+                } , {
+                    "name": "4g"
+                    , "title": "4G"
+                    , "jump": "settings/ports/4g"
+                } , {
+                    "name": "wifi"
+                    , "title": "WIFI"
+                    , "jump": "settings/ports/wifi"
+                } , {
+                    "name": "managernet"
+                    , "title": "网络管理"
+                    , "jump": "settings/ports/managernet"
+                }, {
+                    "name": "ai"
+                    , "title": "AI"
+                    , "jump": "settings/ports/ai"
+                }]
+        }, {
+            "title": "协议参数"
         }]
     }, {
         "name": "component"

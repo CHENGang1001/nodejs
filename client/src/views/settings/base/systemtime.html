@@ -1,0 +1,135 @@
+<script type="text/html" template>
+    <link rel="stylesheet" href="{{ layui.setter.base }}style/system/base/time.css?v={{ layui.admin.v }}-1" media="all">
+</script>
+<head>
+    <meta charset="UTF-8">
+    <title>系统时间</title>
+</head>
+<body>
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">系统设置</a>
+        <a><cite>基本参数</cite></a>
+        <a><cite>系统时间</cite></a>
+    </div>
+</div>
+
+<!--<div class="time-title">系统时间</div>-->
+<!--<div class="layui-col-md12">-->
+<!--<select name="city" lay-verify="">-->
+<!--<option value="">请选择时区</option>-->
+<!--<option value="010">北京</option>-->
+<!--<option value="021">东京</option>-->
+<!--<option value="0571">纽约</option>-->
+<!--</select>-->
+<!--</div>-->
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card layui-form" lay-filter="component-form-element">
+                <div class="layui-card-header">系统时间设置</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md2 time-title">
+                    </div>
+                    <div class="layui-inline layui-form-item">
+                        <label class="layui-form-label">请选择时区</label>
+                        <div class="layui-input-inline">
+                            <select name="quiz">
+                                <option value="">北京</option>
+                                <option value="010">北京</option>
+                                <option value="020">东京</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md2 time-title">
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">请选择日期</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="test-laydate-format-date"
+                                   placeholder="dd/MM/yyyy">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md2 time-title">
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">请选择时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="test-laydate-type-time"
+                                   placeholder="HH:mm:ss">
+                        </div>
+                    </div>
+                </div>
+                <!--</div>-->
+
+                <!--<div class="layui-card layui-form" lay-filter="component-form-element">-->
+                <div class="layui-card-header">时间同步</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <div class="layui-col-md2 time-title">
+                    </div>
+                    <div class="layui-inline layui-form-item">
+                        <label class="layui-form-label">时钟源</label>
+                        <div class="layui-input-inline">
+                            <select name="quiz">
+                                <option value="">NTP</option>
+                                <option value="010">NTP</option>
+                                <option value="020">IEC104</option>
+                                <option value="030">MODBUS-TCP</option>
+                                <option value="040">云平台</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <div class="layui-footer">
+                            <button class="layui-btn" lay-submit="" lay-filter="component-form-demo1">立即提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['admin', 'laydate'], function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: "#test-laydate-format-date－area"
+        });
+        laydate.render({
+            elem: "#test-laydate-format-date"
+            , format: 'dd/MM/yyyy'
+        });
+        laydate.render({
+            elem: "#test-laydate-type-time"
+            , type: 'time'
+        });
+    });
+</script>
+
+<script>
+    layui.use(['admin', 'form'], function () {
+        var $ = layui.$
+            , admin = layui.admin
+            , element = layui.element
+            , form = layui.form;
+
+        form.render(null, 'component-form-element');
+        element.render('breadcrumb', 'breadcrumb');
+
+        form.on('submit(component-form-element)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

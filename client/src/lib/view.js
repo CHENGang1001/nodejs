@@ -84,8 +84,8 @@ layui.define(['laytpl', 'layer'], function (exports) {
         delete options.error;
 
         return $.ajax($.extend({
-            type: 'get'
-            , dataType: 'json'
+            type: 'post'
+            ,dataType: 'json'
             , success: function (res) {
                 var statusCode = response.statusCode;
                 // layer.alert(JSON.stringify(res.data),3);
