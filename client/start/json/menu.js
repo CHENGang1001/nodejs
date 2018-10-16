@@ -58,15 +58,15 @@
                     "name": "ethernet"
                     , "title": "以太网"
                     , "jump": "settings/ports/ethernet"
-                } , {
+                }, {
                     "name": "4g"
                     , "title": "4G"
                     , "jump": "settings/ports/4g"
-                } , {
+                }, {
                     "name": "wifi"
                     , "title": "WIFI"
                     , "jump": "settings/ports/wifi"
-                } , {
+                }, {
                     "name": "managernet"
                     , "title": "网络管理"
                     , "jump": "settings/ports/managernet"
