@@ -1,0 +1,225 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="user/runMessage">概览</a>
+		<a><cite>电网调度</cite></a>
+		<a><cite>无功功率</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-card">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+				<legend id="legend" style="font-size: 20px;">无功功率</legend>
+			</fieldset>
+			<div class="layui-form">
+				<div class="layui-form-item" style="margin-left: 16px;">
+					<input type="radio" name="isEMUor" value="EMU" title="EMU" checked="checked" lay-filter="radioFilter">
+					<input type="radio" name="isEMUor" value="本地功率调节" title="本地功率调节" lay-filter="radioFilter">
+					<div style="float: right;">
+						<label style="font-size: 12px;color: red;">*“EMU”设置与“本地功率调节”只能选择一个</label>
+					</div>
+				</div>
+			</div>
+			<hr />
+
+			<div class="layui-tab-content">
+				<!--有功控制-->
+				<div class="layui-tab-item layui-show" align="center">
+
+					<div class="layui-form">
+						<div class="layui-form-item">
+							<!--<div class="layui-inline">-->
+							<label class="layui-form-label">接线模式</label>
+							<div class="layui-input-inline">
+								<select name="quiz">
+									<option value="0" selected>直连模式</option>
+									<option value="你的工号">级联主机模式</option>
+								</select>
+							</div>
+							<!--</div>-->
+						</div>
+
+						<div class="layui-form-item">
+							<!--<div class="layui-inline">-->
+							<label class="layui-form-label">控制模式</label>
+							<div class="layui-input-inline">
+								<select name="quiz">
+									<option value="0" selected>无功控制</option>
+								</select>
+							</div>
+							<!--</div>-->
+						</div>
+
+						<div class="layui-form-item">
+							<!--<div class="layui-inline">-->
+							<label class="layui-form-label">时间间隔</label>
+							<div class="layui-input-inline">
+								<select name="quiz">
+									<option value="0" selected>10s</option>
+									<option value="1">20s</option>
+									<option value="2">30s</option>
+								</select>
+							</div>
+							<!--</div>-->
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">功率因素目标值</label>
+							<div class="layui-input-block">
+								<input type="text" name="upSpeed" lay-verify="" placeholder="(0.90~1.00)" autocomplete="off" class="layui-input" value="">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">最大无功比</label>
+							<div class="layui-input-block">
+								<input type="text" name="upSpeed" lay-verify="" placeholder="(0~100)%" autocomplete="off" class="layui-input" value="">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<button class="layui-btn" lay-submit="" lay-filter="demo1">提交</button>
+						</div>
+					</div>
+					<hr />
+
+					<div class="layui-form">
+						<div class="layui-form-item">
+							<!--<div class="layui-inline">-->
+							<label class="layui-form-label">日志选择</label>
+							<div class="layui-input-inline">
+								<select name="quiz">
+									<option value="0" selected>emu_cn.log</option>
+								</select>
+							</div>
+							<!--</div>-->
+						</div>
+						<div class="layui-form-item">
+							<button class="layui-btn" lay-submit="" lay-filter="demo1">日志导出</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--本地功率调节-->
+			<div class="layui-card-body" hidden="true">
+				<div class="layui-form" align="center">
+					<div class="layui-form-item">
+						<label class="layui-form-label">控制方式</label>
+						<div class="layui-input-inline">
+							<select name="value">
+								<option value="功率因素固定值" selected>功率因素固定值</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="layui-form-item" style="float: left;">
+						<label style="color: red;">功率因素固定值范围(-1.00~0.80,0.80~1.00)</label>
+					</div>
+					<div class="layui-form-item">
+						<table class="layui-hide" id="powerSetting" lay-filter="powerSetting"></table>
+					</div>
+					<div class="layui-form-item" style="float: left;">
+						<div class="layui-inline">
+							<button class="layui-btn" id="add" lay-submit="" lay-filter="add">添加</button>
+							<button class="layui-btn" id="del" lay-submit="" lay-filter="del">删除</button>
+						</div>
+
+					</div>
+					<div class="layui-form-item">
+						<button class="layui-btn" lay-submit="" lay-filter="sub">提交</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	layui.use('table', function() {
+		var $ = layui.$,
+			table = layui.table,
+			form = layui.form;
+
+		table.render({
+			elem: '#powerSetting',
+			url: './json/table/reactivePower.js',
+			cols: [
+				[{
+					type: 'checkbox'
+				}, {
+					field: 'id',
+					title: 'ID'
+				}, {
+					field: 'beginTime',
+					title: '开始时间',
+					edit: 'text'
+				}, {
+					field: 'value',
+					title: '功率因素固定值',
+					edit: 'text'
+				}]
+			],
+			page: false,
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code === 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+			}
+		});
+
+		//监听复选框事件
+		var tableData = '';
+		table.on('checkbox(powerSetting)', function(obj) {
+			//powerSetting即为基础参数id对应的值
+			var checkStatus = table.checkStatus('powerSetting');
+			//判断是否选中行：checkStatus.data.length
+			if(checkStatus.data.length > 0) {
+				//获取选中行的数据
+				tableData = checkStatus.data
+				console.log('表格中选中数据 ==>' + JSON.stringify(checkStatus.data));
+			} else {
+				tableData = '';
+			}
+		});
+
+		//$('#add').on('click', function(obj) {
+		//	console.log('333333333333333');
+		//});
+
+		//监听提交
+		form.on('submit(sub)', function(data) {
+			var formJson = JSON.stringify(data.field),
+				tableJson = JSON.stringify(tableData);
+			requestJson =
+				layer.alert(formJson + tableJson, {
+					title: '最终的提交信息'
+				})
+			return false;
+		});
+
+		//监听EMU和本地调节功率时间
+		form.on('radio(radioFilter)', function(data) {
+			if(data.value == 'EMU') {
+				$('.layui-tab-content').show();
+				$('.layui-card-body').hide();
+			}
+			if(data.value == '本地功率调节') {
+				$('.layui-tab-content').hide();
+				$('.layui-card-body').show();
+			}
+		});
+
+		//渲染表单：动态加载html自动渲染就会失效，需手动渲染
+		form.render();
+
+	});
+</script>

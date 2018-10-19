@@ -1,0 +1,79 @@
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="user/runMessage">概览</a>
+    <a><cite>历史数据</cite></a>
+    <a><cite>操作日志</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-card">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+				<legend style="font-size: 25px;">操作日志<span style="font-size: 16px;color: red;margin-left: 10px;">* 记录不少于1000条</span></legend>
+			</fieldset>
+			<div class="layui-card-body">
+				<table id="operationMessage" lay-filter="test"></table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	layui.use('table', function() {
+		var table = layui.table;
+		
+		table.render({
+			elem: '#operationMessage',
+			limit: 10,
+			toolbar: '#toolbar',
+			even: true, //开启隔行背景
+			url: './json/table/operationMessage.js', //数据接口
+			page: true, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '序号',
+//						sort: true, //用于排序
+						fixed: 'left'
+					}, {
+						field: 'userName',
+						title: '用户名',
+//						fixed: "center"
+					}, {
+						field: 'operationTime',
+						title: '操作时间',
+						sort:true
+//						fixed: "right"
+					}, {
+						field: 'operationSource',
+						title: '操作源',
+//						fixed: "center"
+					}, {
+						field: 'content',
+						title: '内容',
+						fixed: "right"
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code === 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+			}
+		});
+	});
+</script>

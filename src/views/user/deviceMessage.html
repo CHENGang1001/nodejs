@@ -1,0 +1,405 @@
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="user/runMessage">概览</a>
+    <a><cite>设备管理</cite></a>
+    <a><cite>设备信息</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-card">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+				<legend id="legend" style="font-size: 20px;"></legend>
+			</fieldset>
+			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				<ul class="layui-tab-title">
+					<li class="layui-this">运行信息</li>
+					<li>保护参数</li>
+					<li>并网参数</li>
+					<li>设备指令</li>
+					<li>设备参数</li>
+					<li>故障信息</li>
+					<li>关于</li>
+				</ul>
+
+				<div class="layui-tab-content">
+
+					<div class="layui-tab-item layui-show">
+						<table id="deviceMessage" lay-filter=""></table>
+					</div>
+					<div class="layui-tab-item">
+						<table id="protectParams" lay-filter="protectParams"></table>
+					</div>
+					<div class="layui-tab-item">暂无数据</div>
+					<div class="layui-tab-item">
+						<table id="deviceOrder" lay-filter="orderEvent"></table>
+					</div>
+					<div class="layui-tab-item">
+						<table id="deviceParams" lay-filter="deviceParams"></table>
+					</div>
+					<div class="layui-tab-item">
+						<table id="deviceFaultMessage" lay-filter=""></table>
+					</div>
+					<div class="layui-tab-item">
+						<table id="deviceAbout" lay-filter=""></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--操作列-->
+<script type="text/html" id="oper-col">
+	<a class="layui-btn  layui-btn-xs" lay-event="edit">指令下发</a>
+</script>
+
+<!--添加头部工具栏-->
+<script type="text/html" id="toolbar">
+	<div class="layui-btn-container">
+		<button class="layui-btn layui-btn-sm" lay-event="allSetting">批量设置</button>
+		<button class="layui-btn layui-btn-sm" lay-event="singleSetting">单台设置</button>
+		<button class="layui-btn layui-btn-sm" lay-event="refresh">刷新</button>
+		<!--<label style="font-size: 12px;color: red;margin-left: 10px;">*保护单级/多级跳脱选择需单独下发设置，才可生效</label>-->
+	</div>
+</script>
+
+<script>
+	layui.use('table', function() {
+		var $ = layui.$,
+			table = layui.table,
+			data = layui.data;
+		//从本地localstorage取数据
+		$('#legend').html(data('titleTable').titleName);
+
+		//运行信息
+		table.render({
+			elem: '#deviceMessage',
+			limit: 10,
+			even: true, //开启隔行背景
+			url: './json/table/deviceMessage.js', //数据接口
+			page: true, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '序号',
+						sort: true, //用于排序
+						fixed: 'left'
+					}, {
+						field: 'params',
+						title: '参数名称',
+						fixed: "center"
+					}, {
+						field: 'value/unit',
+						title: '当前值/单位',
+						fixed: "right"
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code == 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+
+			}
+		});
+
+		//保护参数
+		table.render({
+			elem: '#protectParams',
+			url: './json/table/protectParamsMessage.js',
+			toolbar: '#toolbar',
+			cols: [
+				[{
+					type: 'checkbox',
+					fixed: 'left'
+				}, {
+					field: 'id',
+					title: 'ID',
+					fixed: 'left',
+					unresize: true
+				}, {
+					field: 'param',
+					title: '参数名称'
+				}, {
+					field: 'set',
+					title: '设置值',
+//					edit: 'text',
+					event: 'setValue', 
+					style:'cursor: pointer'
+				}, {
+					field: 'range',
+					title: '范围'
+				}, {
+					field: 'unit',
+					title: '单位'
+				}]
+			],
+			page: true
+		});
+		
+		//保护参数头工具栏事件
+		table.on('toolbar(protectParams)', function(obj) {
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch(obj.event) {
+				case 'allSetting':
+					var data = checkStatus.data;
+					layer.alert('批量设置数据' + JSON.stringify(data));
+					break;
+				case 'singleSetting':
+					var data = checkStatus.data;
+					layer.msg('单个设置数据' + JSON.stringify(data));
+					break;
+				case 'refresh':
+					layer.msg('刷新成功！');
+					break;
+			};
+		});
+		//监听设置值单元格事件
+		table.on('tool(protectParams)', function(obj) {
+			var data = obj.data;
+			if(obj.event === 'setValue') {
+				layer.prompt({
+					formType: 3,
+					title: '设置' + data.param+ '值',
+					value: data.set
+				}, function(value, index) {
+					layer.close(index);
+					//这里一般是发送修改的Ajax请求
+					//同步更新表格和缓存对应的值
+					obj.update({
+						set: value
+					});
+				});
+			}
+		});
+		//设备参数
+		table.render({
+			elem: '#deviceParams',
+			url: './json/table/deviceParamsMessage.js',
+			toolbar: '#toolbar',
+			cols: [
+				[{
+					type: 'checkbox',
+					fixed: 'left'
+				}, {
+					field: 'id',
+					title: 'ID',
+					fixed: 'left',
+					unresize: true
+				}, {
+					field: 'param',
+					title: '参数名称'
+				}, {
+					field: 'set',
+					title: '设置值',
+//					edit: 'text',
+					event: 'setValue', 
+					style:'cursor: pointer'
+				}, {
+					field: 'range',
+					title: '范围'
+				}, {
+					field: 'unit',
+					title: '单位'
+				}]
+			],
+			page: true
+		});
+		
+		//设备参数头工具栏事件
+		table.on('toolbar(deviceParams)', function(obj) {
+			var checkStatus = table.checkStatus(obj.config.id);
+			switch(obj.event) {
+				case 'allSetting':
+					var data = checkStatus.data;
+					layer.alert('批量设置数据' + JSON.stringify(data));
+					break;
+				case 'singleSetting':
+					var data = checkStatus.data;
+					layer.msg('单个设置数据' + JSON.stringify(data));
+					break;
+				case 'refresh':
+					layer.msg('刷新成功！');
+					break;
+			};
+		});
+		//监听设置值单元格事件
+		table.on('tool(deviceParams)', function(obj) {
+			var data = obj.data;
+			if(obj.event === 'setValue') {
+				layer.prompt({
+					formType: 3,
+					title: '设置' + data.param+ '值',
+					value: data.set
+				}, function(value, index) {
+					layer.close(index);
+					//这里一般是发送修改的Ajax请求
+					//同步更新表格和缓存对应的值
+					obj.update({
+						set: value
+					});
+				});
+			}
+		});
+		
+		
+		//设备指令
+		table.render({
+			elem: '#deviceOrder',
+			limit: 4,
+			even: true, //开启隔行背景
+			url: './json/table/deviceOrder.js', //数据接口
+			page: false, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '序号',
+						//						sort: true, //用于排序
+						fixed: 'left'
+					}, {
+						field: 'name',
+						title: '名称',
+						fixed: "center"
+					}, {
+						templet: '#oper-col',
+						title: '操作',
+						fixed: "right"
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				if(res.code == 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+
+			}
+		});
+		
+		//指令下发操作
+		table.on('tool(orderEvent)', function(obj) {
+			var data = obj.data;
+			var layEvent = obj.event;
+			if(layEvent === 'edit') {
+				layer.msg(data.name + "指令下发成功");
+			}
+		});
+		
+		//设备告警信息
+		table.render({
+			elem: '#deviceFaultMessage',
+			limit: 10,
+			even: true, //开启隔行背景
+			url: './json/table/deviceFaultMessage.js', //数据接口
+			page: true, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '告警ID',
+						fixed: 'left'
+					}, {
+						field: 'class',
+						title: '级别',
+					}, {
+						field: 'device',
+						title: '设备',
+					},
+					{
+						field: 'faultName',
+						title: '告警名称',
+					}, {
+						field: 'time',
+						title: '产生时间',
+						fixed: "right",
+						sort: true
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code === 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+			}
+		});
+
+		//关于
+		table.render({
+			elem: '#deviceAbout',
+			limit: 3,
+			even: true, //开启隔行背景
+			url: './json/table/deviceAbout.js', //数据接口
+			page: false, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '序号',
+						//						sort: true, //用于排序
+						fixed: 'left'
+					}, {
+						field: 'name',
+						title: '名称',
+						fixed: "center"
+					}, {
+						field: 'version',
+						title: '版本',
+						fixed: "right"
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code == 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+
+			}
+		});
+
+	});
+</script>

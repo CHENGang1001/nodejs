@@ -1,0 +1,192 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="user/runMessage">概览</a>
+		<a><cite>故障信息</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-card">
+			<div>
+				<legend style="padding-left: 15px;">
+					告警设备数量: <label style="color: red;font-size: 20px;">10</label>
+				</legend>
+				<hr />
+			</div>
+			<!--form表单-->
+			<form class="layui-form" action="">
+				<!--设备、级别、排序、搜索布局-->
+				<div class="layui-form-item">
+					<!--设备-->
+					<div class="layui-inline">
+						<label class="layui-form-label" style="margin-left: -40px;">设备：</label>
+						<div class="layui-input-inline">
+							<select class="form-control input-sm" lay-filter="deviceTag" lay-search="">
+								<option value="1">全部</option>
+								<option value="2">Logger1000</option>
+							</select>
+						</div>
+					</div>
+					<!--设备-->
+
+					<!--级别-->
+					<div class="layui-inline">
+						<label class="layui-form-label" style="margin-left: -40px;">级别：</label>
+						<div class="layui-input-inline">
+							<select lay-filter="rankTag" lay-verify="required" lay-search="">
+								<option value="1">全部</option>
+								<option value="2">重要</option>
+								<option value="3">次要</option>
+								<option value="4">提示</option>
+							</select>
+						</div>
+					</div>
+					<!--级别-->
+
+					<!--排序-->
+					<div class="layui-inline">
+						<label class="layui-form-label" style="margin-left: -40px;">排序：</label>
+						<div class="layui-input-inline">
+							<select lay-filter="sortTag" lay-verify="required" lay-search="">
+								<option value="1">时间排序</option>
+								<option value="2">级别排序</option>
+							</select>
+						</div>
+					</div>
+					<!--排序-->
+
+					<!--搜索-->
+					<div class="layui-inline">
+						<button class="layui-btn" data-type="reload">搜索</button>
+					</div>
+					<!--搜索-->
+				</div>
+				<!--设备、级别、排序、搜索布局-->
+			</form>
+			<!--form表单-->
+
+			<!--表格数据-->
+			<div class="layui-card-body">
+				<table id="faultMessage" lay-filter="test"></table>
+			</div>
+		</div>
+		<!--表格结束-->
+	</div>
+</div>
+<script>
+	layui.use('table', function() {
+		var $ = layui.$,
+			table = layui.table,
+			form = layui.form,
+			selectDevice = '全部',
+			selectRank = '全部',
+			selectSort = '时间排序';
+
+		table.render({
+			elem: '#faultMessage',
+			limit: 10,
+			even: true, //开启隔行背景
+			url: './json/table/faultMessage.js', //数据接口
+			page: true, //开启分页
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '告警ID',
+						fixed: 'left'
+					}, {
+						field: 'rank',
+						title: '级别',
+					}, {
+						field: 'device',
+						title: '设备',
+					},
+					{
+						field: 'faultName',
+						title: '告警名称',
+					}, {
+						field: 'time',
+						title: '产生时间',
+						fixed: "right",
+						sort: true
+					}
+				]
+			],
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code === 0) {
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+			}
+		});
+
+		//	  	var getSelectedContent = function(tagName){
+		//	  		var name = 'select(' + tagName + ')';
+		//	  		var content = '';
+		//				//获取下拉列表内容
+		//				form.on(name, function(data) {
+		//					content = data.elem[data.elem.selectedIndex].text;
+		//					console.log('下拉框选择内容===>' + content);
+		//					form.render('select');
+		//				});
+		//				return content;
+		//		};
+
+		//获取下拉列表内容
+		form.on('select(deviceTag)', function(data) {
+			//category = data.value;
+			selectDevice = data.elem[data.elem.selectedIndex].text;
+			console.log('下拉框选择内容===>' + selectDevice);
+			//			form.render('select');如果是后台动态加载option，则必须重新渲染select标签
+		});
+		form.on('select(rankTag)', function(data) {
+			selectRank = data.elem[data.elem.selectedIndex].text;
+			console.log('下拉框选择内容===>' + selectRank);
+			//			form.render('select');
+		});
+		form.on('select(sortTag)', function(data) {
+			selectSort = data.elem[data.elem.selectedIndex].text;
+			console.log('下拉框选择内容===>' + selectSort);
+
+			//			form.render('select'); 
+		});
+
+		//筛选
+		active = {
+			reload: function() {
+				console.log('删选关键字===>' + selectDevice + selectRank + selectSort)
+				//执行重载
+				table.reload('faultMessage', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					},
+					where: {
+						key: {
+							device: selectDevice,
+							rank: selectRank,
+							time: selectSort
+						}
+					}
+				});
+			}
+		};
+		//搜索按钮：监听方法
+		$('.layui-btn').on('click', function() {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+		form.render();
+	});
+</script>

@@ -1,0 +1,54 @@
+<title>RS485</title>
+
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">系统设置</a>
+        <a><cite>端口参数</cite></a>
+        <a><cite>RS485</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">RS485端口数据</div>
+                <div class="layui-card-body">
+                    <table class="layui-hide" id="test-table-cellEdit" lay-filter="test-table-cellEdit"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['admin','form', 'table'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        form.render(null, 'component-form-element');
+
+        table.render({
+            elem: '#test-table-cellEdit'
+            , url: './json/table/demo.js'
+            , cols: [[
+                 {field: 'id', title: '串口名称', minWidth: 120, sort: true}
+                , {field: 'username', title: '端口功能', minWidth: 120,  edit: 'text'}
+                , {field: 'email', title: '比特率', minWidth: 120, edit: 'text'}
+                , {field: 'sex', title: '校验位', minWidth: 120, edit: 'text'}
+                , {field: 'city', title: '数据位',minWidth: 120, edit: 'text'}
+                , {field: 'experience', title: '停止位',  edit: 'text',minWidth: 120}
+            ]]
+        })
+
+        //监听单元格编辑
+        table.on('edit(test-table-cellEdit)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value, {
+                offset: '15px'
+            });
+        });
+
+    });
+</script>

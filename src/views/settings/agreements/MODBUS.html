@@ -1,0 +1,85 @@
+<!--<script type="text/html" template>-->
+<!--<link rel="stylesheet" href="{{ layui.setter.base }}style/system/ports/WIFI.css?v={{ layui.admin.v }}-1" media="all">-->
+<!--</script>-->
+<title>MODBUS</title>
+
+<div class="layui-fluid" id="component-tabs">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!--<div class="layui-card-header">默认风格</div>-->
+                <div class="layui-card-body">
+                    <div class="layui-tab">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">转发服务器配置</li>
+                            <li>网络端口配置</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <table class="layui-hide" id="test-table-cellEdit1"
+                                       lay-filter="test-table-cellEdit1"></table>
+                            </div>
+
+
+                            <div class="layui-tab-item">
+                                <table class="layui-hide" id="test-table-cellEdit2"
+                                       lay-filter="test-table-cellEdit2"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['admin', 'table'], function () {
+        var table = layui.table;
+
+        table.render({
+            elem: '#test-table-cellEdit1'
+            , url: './json/table/demo.js'
+            , cols: [[
+                {field: 'id', title: '序号', minWidth: 120, sort: true}
+                , {field: 'username', title: '设备名称', minWidth: 120, edit: 'text'}
+                , {field: 'email', title: '设备采集接口', minWidth: 120, edit: 'text'}
+                , {field: 'sex', title: '采集地址', minWidth: 120, edit: 'text'}
+                , {field: 'city', title: '后台采集接口', minWidth: 120, edit: 'text'}
+                , {field: 'experience', title: '后台地址', edit: 'text', minWidth: 120}
+            ]]
+        });
+        table.render({
+            elem: '#test-table-cellEdit2'
+            , url: './json/table/demo.js'
+            , cols: [[
+                {field: 'id', title: '串口名称', minWidth: 120, sort: true}
+                , {field: 'username', title: '端口功能', minWidth: 120, edit: 'text'}
+                , {field: 'email', title: '比特率', minWidth: 120, edit: 'text'}
+                , {field: 'sex', title: '校验位', minWidth: 120, edit: 'text'}
+                , {field: 'city', title: '数据位', minWidth: 120, edit: 'text'}
+                , {field: 'experience', title: '停止位', edit: 'text', minWidth: 120}
+            ]]
+        });
+
+        //监听单元格编辑
+        table.on('edit(test-table-cellEdit1)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value, {
+                offset: '15px'
+            });
+        });
+        table.on('edit(test-table-cellEdit2)', function (obj) {
+            var value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value, {
+                offset: '15px'
+            });
+        });
+
+    });
+</script>

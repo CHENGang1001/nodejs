@@ -1,0 +1,147 @@
+
+<div class="layui-card layadmin-header">
+  <div class="layui-breadcrumb" lay-filter="breadcrumb">
+    <a lay-href="user/runMessage">概览</a>
+    <a><cite>设备管理</cite></a>
+  </div>
+</div>
+
+<div class="layui-fluid">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-card">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+				<legend style="font-size: 20px;">设备管理</legend>
+			</fieldset>
+			<div class="layui-card-body">
+				<div class="layui-form">
+					设备：
+					<div class="layui-inline">
+						<select class="form-control input-sm" name="category" lay-filter="category" id="zcySelect" aria-invalid="false">
+							<option value="000" selected="">全部</option>
+						</select>
+					</div>
+					<button class="layui-btn" data-type="reload">筛选</button>
+				</div>
+				<table class="layui-table" id="LAY_table_user" lay-filter="user"></table>
+			</div>
+		</div>
+	</div>
+</div>
+<!--操作列-->
+<script type="text/html" id="oper-col">
+	<a class="layui-btn  layui-btn-xs" lay-event="edit">查看</a>
+</script>
+
+<script>
+	layui.use('table', function() {
+		var $ = layui.$,
+			table = layui.table,
+			form = layui.form,
+			data = layui.data,
+			isFirstTime = true;
+			
+		//表格渲染
+		table.render({
+			elem: '#LAY_table_user',
+			limit: 10,
+			even: true, //开启隔行背景
+			url: './json/table/deviceManager.js', //数据接口
+			page: true, //开启分页
+			method:'GET',
+			id: 'tableReload',
+			cols: [
+				[ //表头
+					{
+						field: 'id',
+						title: '序号',
+						fixed: 'left'
+					}, {
+						field: 'deviceName',
+						title: '设备名称',
+						fixed: "center"
+					}, {
+						templet: '#oper-col',
+						title: '操作',
+						fixed: "right"
+					}
+				]
+			],
+			//如果是异步请求数据方式，res即为你接口返回的信息。
+			done: function(res, curr, count) {
+				console.log(res); //打印返回结果
+				if(res.code == 0) {//数据请求成功
+					//动态添加option标签
+					if(count != 0 & isFirstTime) {
+						for(var i = 0; i < res.data.length; i++) {
+							$("#zcySelect").append("<option value=" + res.data[i].id + ">" + res.data[i].deviceName + "</option>");
+						}
+						form.render('select');
+					}  
+					return layer.msg('数据请求成功', {
+						offset: '15px',
+						icon: 1,
+						time: 1000
+					});
+				} else {
+					return layer.msg('借口异常，请稍后再试！', {
+						offset: '15px',
+						icon: 0,
+						time: 1000
+					});
+				}
+			}
+		});
+
+		//获取下拉列表内容 
+		var contentName = '全部';
+		form.on('select(category)', function(data) {
+			//category = data.value;
+			contentName = data.elem[data.elem.selectedIndex].text;
+			console.log('下拉框选择内容===>' + contentName);
+//			form.render('select');
+		});
+
+		//筛选
+		active = {
+			reload: function() {
+				console.log('删选关键字===>' + contentName)
+				//执行重载
+				table.reload('tableReload', {
+					page: {
+						curr: 1 //重新从第 1 页开始
+					},
+					where: {
+						key: {
+							deviceName: contentName
+						}
+					}
+				});
+			}
+		};
+		//筛选按钮：监听方法
+		$('.layui-btn').on('click', function() {
+			isFirstTime = false;
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+
+		//查看按钮事件：监听工具条
+		table.on('tool(user)', function(obj) {//tool()中为table lay-filter值
+			var val = obj.data;
+			var layEvent = obj.event;
+			//删除titleTable表
+			data('titleTable', null); 
+			//localStorage 持久化存储
+			data('titleTable',{
+				key:'titleName',
+				value:val.deviceName
+			});
+			
+			if(layEvent === 'edit') {
+				//路由
+				location.hash = '/user/deviceMessage';
+			}
+		});
+		form.render();
+});
+</script>
